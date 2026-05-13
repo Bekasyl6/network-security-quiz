@@ -1,0 +1,1211 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Network Security Quiz Trainer</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #11182b;
+      --panel-2: #151f36;
+      --text: #e8edf7;
+      --muted: #94a3b8;
+      --line: rgba(148, 163, 184, 0.22);
+      --accent: #7c3aed;
+      --accent-2: #22c55e;
+      --danger: #ef4444;
+      --warn: #f59e0b;
+      --shadow: 0 20px 70px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(124,58,237,.22), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(34,197,94,.13), transparent 30rem),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      border-radius: 13px;
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 11px 14px;
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease, opacity .12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); background: #1b2947; }
+    button:disabled { cursor: not-allowed; opacity: .52; transform: none; }
+
+    .primary { background: linear-gradient(135deg, var(--accent), #4f46e5); }
+    .primary:hover { background: linear-gradient(135deg, #8b5cf6, #6366f1); }
+    .green { background: rgba(34, 197, 94, .17); color: #bbf7d0; border: 1px solid rgba(34,197,94,.35); }
+    .red { background: rgba(239, 68, 68, .16); color: #fecaca; border: 1px solid rgba(239,68,68,.35); }
+    .ghost { background: transparent; border: 1px solid var(--line); }
+
+    .app {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 26px 0 46px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, var(--accent), #06b6d4);
+      box-shadow: 0 16px 40px rgba(124,58,237,.25);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 34px);
+      letter-spacing: -.04em;
+    }
+
+    .sub {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: rgba(17, 24, 43, .86);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .side {
+      padding: 18px;
+      position: sticky;
+      top: 16px;
+    }
+
+    .main {
+      padding: 22px;
+      min-height: 620px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin: 0 0 12px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .stat .num {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .actions {
+      display: grid;
+      gap: 9px;
+      margin: 14px 0 18px;
+    }
+
+    .actions.two {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .import-box {
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #0b1222;
+      color: var(--text);
+      padding: 12px;
+      outline: none;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      background: rgba(255,255,255,.03);
+    }
+
+    .hint {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .notice {
+      background: rgba(245,158,11,.11);
+      border: 1px solid rgba(245,158,11,.28);
+      color: #fde68a;
+      border-radius: 14px;
+      padding: 12px;
+      margin: 13px 0;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .oknotice {
+      background: rgba(34,197,94,.11);
+      border-color: rgba(34,197,94,.28);
+      color: #bbf7d0;
+    }
+
+    .quiz-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+    }
+
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      font-size: 13px;
+    }
+
+    .progress-wrap {
+      margin: 14px 0 4px;
+      height: 9px;
+      background: rgba(255,255,255,.07);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #22c55e);
+      transition: width .25s ease;
+    }
+
+    .q-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .question {
+      font-size: clamp(21px, 2.4vw, 31px);
+      line-height: 1.25;
+      letter-spacing: -.035em;
+      margin: 0 0 16px;
+      white-space: pre-wrap;
+    }
+
+    .codeblock {
+      white-space: pre-wrap;
+      background: #050a14;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #dbeafe;
+      margin: 12px 0;
+    }
+
+    .images {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      margin: 12px 0 18px;
+    }
+
+    .images img {
+      width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      text-align: left;
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.045);
+      padding: 14px;
+      border-radius: 16px;
+      line-height: 1.45;
+    }
+
+    .option:hover {
+      background: rgba(124,58,237,.13);
+      border-color: rgba(124,58,237,.45);
+    }
+
+    .option .letter {
+      flex: 0 0 auto;
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      display: inline-grid;
+      place-items: center;
+      background: rgba(255,255,255,.08);
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .option.selected {
+      border-color: rgba(124,58,237,.8);
+      background: rgba(124,58,237,.20);
+    }
+
+    .option.correct {
+      border-color: rgba(34,197,94,.8);
+      background: rgba(34,197,94,.18);
+    }
+
+    .option.wrong {
+      border-color: rgba(239,68,68,.82);
+      background: rgba(239,68,68,.16);
+    }
+
+    .answer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .feedback {
+      min-height: 28px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .feedback.good { color: #86efac; }
+    .feedback.bad { color: #fca5a5; }
+
+    .end-screen {
+      display: grid;
+      gap: 14px;
+    }
+
+    .big-score {
+      font-size: clamp(42px, 8vw, 74px);
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -.07em;
+      margin: 0;
+    }
+
+    .mistake-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+      max-height: 360px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .mistake-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .mistake-item b { display: block; margin-bottom: 7px; }
+    .mistake-item small { color: var(--muted); line-height: 1.45; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .side { position: static; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Network Security Quiz Trainer</h1>
+          <p class="sub">Тёмный тренажёр: один ответ, несколько ответов, импорт, работа над ошибками.</p>
+        </div>
+      </div>
+      <button id="toggleImport" class="ghost">Импорт / банк вопросов</button>
+    </header>
+
+    <div class="grid">
+      <aside class="card side">
+        <p class="section-title">Статистика</p>
+        <div class="stat-grid">
+          <div class="stat"><div id="statTotal" class="num">0</div><div class="label">вопросов</div></div>
+          <div class="stat"><div id="statMistakes" class="num">0</div><div class="label">ошибок</div></div>
+          <div class="stat"><div id="statSolved" class="num">0</div><div class="label">правильно</div></div>
+          <div class="stat"><div id="statWrong" class="num">0</div><div class="label">неправильно</div></div>
+        </div>
+
+        <div class="actions">
+          <button id="startAll" class="primary">Начать весь тест</button>
+          <button id="startMistakes" class="green">Работа над ошибками</button>
+        </div>
+        <div class="actions two">
+          <button id="exportJson">Экспорт JSON</button>
+          <button id="resetProgress" class="red">Сброс</button>
+        </div>
+
+        <div id="importPanel" class="import-box hidden">
+          <p class="section-title">Импорт</p>
+          <p class="hint">
+            Лучший способ: открой страницу с ответами → Ctrl+S → сохранить как HTML → загрузи сюда файл.
+            Код попытается найти вопросы, варианты и правильные ответы по красному цвету / “Correct Answer”.
+          </p>
+          <input id="htmlFile" type="file" accept=".html,.htm,.txt,.json" />
+          <div class="actions two">
+            <button id="loadFile" class="primary">Загрузить файл</button>
+            <button id="clearBank" class="red">Очистить банк</button>
+          </div>
+          <textarea id="pasteBox" placeholder="Или вставь сюда HTML / JSON / текст с вариантами и Correct Answer..."></textarea>
+          <div class="actions two">
+            <button id="parsePaste">Импорт из поля</button>
+            <button id="loadSample">Загрузить пример</button>
+          </div>
+          <div id="importStatus" class="notice hidden"></div>
+          <p class="hint">
+            Формат JSON: массив объектов [{"question":"...","options":[{"text":"...","correct":true}]}].
+          </p>
+        </div>
+      </aside>
+
+      <main class="card main">
+        <section id="welcome">
+          <div class="quiz-head">
+            <div>
+              <span class="mode-pill">Готов к запуску</span>
+              <div class="progress-wrap"><div class="progress" style="width:0%"></div></div>
+            </div>
+          </div>
+          <h2 class="question">Сначала загрузи банк вопросов или используй пример.</h2>
+          <p class="hint">
+            Сайт хранит вопросы и прогресс в localStorage браузера. Ответы каждый раз перемешиваются.
+            Если в вопросе один правильный ответ, после клика сайт на секунду показывает правильный ответ и переходит дальше.
+            Если правильных несколько, выбери все нужные варианты и нажми “Ответить”.
+          </p>
+          <div class="notice">
+            Для полного банка с сайта нужно импортировать сохранённую HTML-страницу. Обычный copy-paste часто убирает красную подсветку правильных вариантов, поэтому автоматический парсер может не распознать часть ответов.
+          </div>
+        </section>
+
+        <section id="quiz" class="hidden">
+          <div class="quiz-head">
+            <div style="width:100%">
+              <div class="q-meta">
+                <span id="modeName" class="mode-pill">Тест</span>
+                <span id="qCounter">1 / 1</span>
+              </div>
+              <div class="progress-wrap"><div id="progress" class="progress"></div></div>
+            </div>
+          </div>
+
+          <div class="q-meta">
+            <span id="qType">Один правильный ответ</span>
+            <span id="qId"></span>
+          </div>
+          <h2 id="questionText" class="question"></h2>
+          <div id="codeBlock" class="codeblock hidden"></div>
+          <div id="imageBox" class="images hidden"></div>
+          <div id="options" class="options"></div>
+          <div class="answer-row">
+            <div id="feedback" class="feedback"></div>
+            <button id="submitMulti" class="primary hidden">Ответить</button>
+          </div>
+        </section>
+
+        <section id="end" class="end-screen hidden">
+          <span id="endMode" class="mode-pill">Итог</span>
+          <p id="bigScore" class="big-score">0%</p>
+          <p id="endText" class="hint"></p>
+          <div class="actions two">
+            <button id="againAll" class="primary">Пройти весь тест заново</button>
+            <button id="againMistakes" class="green">Работа над ошибками</button>
+          </div>
+          <div id="mistakeWrap" class="hidden">
+            <p class="section-title">Неправильные вопросы</p>
+            <div id="mistakeList" class="mistake-list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    const STORAGE_BANK = "ns_quiz_bank_v1";
+    const STORAGE_PROGRESS = "ns_quiz_progress_v1";
+
+    const SAMPLE_QUESTIONS = [
+      {
+        id: "sample-aaa-1",
+        question: "Что означает Authorization в AAA?",
+        options: [
+          { text: "Проверка личности пользователя", correct: false },
+          { text: "Определение того, какие действия пользователю разрешены", correct: true },
+          { text: "Запись действий пользователя в журнал", correct: false },
+          { text: "Шифрование всего трафика", correct: false }
+        ]
+      },
+      {
+        id: "sample-radius-1",
+        question: "Какие утверждения верны для TACACS+? (Choose two.)",
+        options: [
+          { text: "Использует TCP port 49", correct: true },
+          { text: "Использует UDP port 1812", correct: false },
+          { text: "Шифрует весь пакет", correct: true },
+          { text: "Шифрует только пароль", correct: false }
+        ]
+      },
+      {
+        id: "sample-ipsec-1",
+        question: "Что происходит во время IKE Phase 2?",
+        options: [
+          { text: "Negotiation of IPsec policy / IPsec SA", correct: true },
+          { text: "Only peer identity verification", correct: false },
+          { text: "Only CLI role creation", correct: false },
+          { text: "Only DHCP snooping binding", correct: false }
+        ]
+      },
+      {
+        id: "sample-switch-1",
+        question: "Какие защиты соответствуют атакам? (Choose three.)",
+        options: [
+          { text: "ARP spoofing → Dynamic ARP Inspection", correct: true },
+          { text: "CAM table overflow → Port Security", correct: true },
+          { text: "VLAN hopping → disable DTP/static access ports", correct: true },
+          { text: "DHCP spoofing → HMAC", correct: false },
+          { text: "MAC flooding → OCSP", correct: false }
+        ]
+      },
+      {
+        id: "sample-ids-ips-1",
+        question: "Главное отличие IDS и IPS?",
+        options: [
+          { text: "IDS inline, IPS passive", correct: false },
+          { text: "IDS может только обнаруживать, IPS может останавливать трафик inline", correct: true },
+          { text: "IPS не влияет на traffic flow", correct: false },
+          { text: "IDS заменяет firewall", correct: false }
+        ]
+      }
+    ];
+
+    let bank = loadBank();
+    let progressState = loadProgress();
+    let session = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    function normalizeText(text) {
+      return String(text || "")
+        .replace(/\u00a0/g, " ")
+        .replace(/[ \t]+/g, " ")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+    }
+
+    function uid(prefix = "q") {
+      return `${prefix}-${Math.random().toString(36).slice(2, 10)}-${Date.now().toString(36)}`;
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function shuffle(array) {
+      const a = [...array];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function loadBank() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_BANK) || "[]");
+        return sanitizeBank(saved);
+      } catch {
+        return [];
+      }
+    }
+
+    function saveBank() {
+      localStorage.setItem(STORAGE_BANK, JSON.stringify(bank));
+      renderStats();
+    }
+
+    function loadProgress() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_PROGRESS) || "{}");
+        return {
+          wrongIds: Array.isArray(saved.wrongIds) ? saved.wrongIds : [],
+          solved: Number(saved.solved || 0),
+          wrong: Number(saved.wrong || 0)
+        };
+      } catch {
+        return { wrongIds: [], solved: 0, wrong: 0 };
+      }
+    }
+
+    function saveProgress() {
+      progressState.wrongIds = [...new Set(progressState.wrongIds)];
+      localStorage.setItem(STORAGE_PROGRESS, JSON.stringify(progressState));
+      renderStats();
+    }
+
+    function sanitizeBank(raw) {
+      if (!Array.isArray(raw)) return [];
+      return raw
+        .map((q, idx) => {
+          const options = Array.isArray(q.options)
+            ? q.options.map((o) => ({
+                text: normalizeText(typeof o === "string" ? o : o.text),
+                correct: Boolean(typeof o === "object" && o.correct)
+              })).filter(o => o.text)
+            : [];
+
+          return {
+            id: String(q.id || `q-${idx + 1}`),
+            question: normalizeText(q.question || q.text || ""),
+            code: normalizeText(q.code || ""),
+            images: Array.isArray(q.images) ? q.images.filter(Boolean) : [],
+            options
+          };
+        })
+        .filter(q => q.question && q.options.length >= 2 && q.options.some(o => o.correct));
+    }
+
+    function renderStats() {
+      const mistakes = progressState.wrongIds.filter(id => bank.some(q => q.id === id));
+      progressState.wrongIds = [...new Set(mistakes)];
+      $("statTotal").textContent = bank.length;
+      $("statMistakes").textContent = progressState.wrongIds.length;
+      $("statSolved").textContent = progressState.solved;
+      $("statWrong").textContent = progressState.wrong;
+      $("startAll").disabled = bank.length === 0;
+      $("startMistakes").disabled = progressState.wrongIds.length === 0;
+      $("againMistakes").disabled = progressState.wrongIds.length === 0;
+    }
+
+    function setStatus(message, good = false) {
+      const box = $("importStatus");
+      box.classList.remove("hidden", "oknotice");
+      if (good) box.classList.add("oknotice");
+      box.textContent = message;
+    }
+
+    function showScreen(name) {
+      ["welcome", "quiz", "end"].forEach(id => $(id).classList.add("hidden"));
+      $(name).classList.remove("hidden");
+    }
+
+    function startQuiz(mode) {
+      if (!bank.length) {
+        showScreen("welcome");
+        return;
+      }
+
+      const selected = mode === "mistakes"
+        ? bank.filter(q => progressState.wrongIds.includes(q.id))
+        : [...bank];
+
+      if (!selected.length) {
+        renderEnd({ mode, total: 0, correct: 0, wrong: 0, wrongQuestions: [] });
+        return;
+      }
+
+      session = {
+        mode,
+        queue: shuffle(selected).map(q => ({ ...q, options: shuffle(q.options) })),
+        index: 0,
+        correct: 0,
+        wrong: 0,
+        wrongQuestions: [],
+        locked: false,
+        selected: new Set()
+      };
+
+      showScreen("quiz");
+      renderQuestion();
+    }
+
+    function getCurrentQuestion() {
+      return session?.queue?.[session.index] || null;
+    }
+
+    function correctCount(q) {
+      return q.options.filter(o => o.correct).length;
+    }
+
+    function renderQuestion() {
+      const q = getCurrentQuestion();
+      if (!q) return finishQuiz();
+
+      session.locked = false;
+      session.selected = new Set();
+
+      const total = session.queue.length;
+      const n = session.index + 1;
+      const isMulti = correctCount(q) > 1;
+
+      $("modeName").textContent = session.mode === "mistakes" ? "Работа над ошибками" : "Полный тест";
+      $("qCounter").textContent = `${n} / ${total}`;
+      $("progress").style.width = `${((n - 1) / total) * 100}%`;
+      $("qType").textContent = isMulti
+        ? `Несколько правильных ответов: ${correctCount(q)}`
+        : "Один правильный ответ";
+      $("qId").textContent = q.id ? `ID: ${q.id}` : "";
+      $("questionText").textContent = q.question;
+
+      if (q.code) {
+        $("codeBlock").classList.remove("hidden");
+        $("codeBlock").textContent = q.code;
+      } else {
+        $("codeBlock").classList.add("hidden");
+        $("codeBlock").textContent = "";
+      }
+
+      if (q.images && q.images.length) {
+        $("imageBox").classList.remove("hidden");
+        $("imageBox").innerHTML = q.images.map(src => `<img src="${escapeHtml(src)}" alt="question image">`).join("");
+      } else {
+        $("imageBox").classList.add("hidden");
+        $("imageBox").innerHTML = "";
+      }
+
+      $("feedback").className = "feedback";
+      $("feedback").textContent = isMulti ? "Выбери все правильные варианты и нажми “Ответить”." : "Нажми на вариант ответа.";
+      $("submitMulti").classList.toggle("hidden", !isMulti);
+      $("submitMulti").disabled = true;
+
+      $("options").innerHTML = q.options.map((o, i) => `
+        <button class="option" data-index="${i}" type="button">
+          <span class="letter">${String.fromCharCode(65 + i)}</span>
+          <span>${escapeHtml(o.text).replace(/\n/g, "<br>")}</span>
+        </button>
+      `).join("");
+
+      [...$("options").querySelectorAll(".option")].forEach(btn => {
+        btn.addEventListener("click", () => handleOptionClick(Number(btn.dataset.index)));
+      });
+    }
+
+    function handleOptionClick(index) {
+      if (!session || session.locked) return;
+      const q = getCurrentQuestion();
+      const isMulti = correctCount(q) > 1;
+
+      if (!isMulti) {
+        session.selected = new Set([index]);
+        gradeCurrent();
+        return;
+      }
+
+      const btn = $("options").querySelector(`[data-index="${index}"]`);
+      if (session.selected.has(index)) {
+        session.selected.delete(index);
+        btn.classList.remove("selected");
+      } else {
+        session.selected.add(index);
+        btn.classList.add("selected");
+      }
+      $("submitMulti").disabled = session.selected.size === 0;
+    }
+
+    function sameSet(a, b) {
+      if (a.size !== b.size) return false;
+      for (const x of a) if (!b.has(x)) return false;
+      return true;
+    }
+
+    function gradeCurrent() {
+      if (!session || session.locked) return;
+      const q = getCurrentQuestion();
+      const correct = new Set(q.options.map((o, i) => o.correct ? i : null).filter(i => i !== null));
+      const chosen = new Set(session.selected);
+      const isRight = sameSet(chosen, correct);
+
+      session.locked = true;
+      revealAnswer(chosen, correct);
+
+      if (isRight) {
+        session.correct++;
+        progressState.solved++;
+        if (session.mode === "mistakes") {
+          progressState.wrongIds = progressState.wrongIds.filter(id => id !== q.id);
+        }
+        $("feedback").className = "feedback good";
+        $("feedback").textContent = "Правильно. Сейчас будет следующий вопрос.";
+      } else {
+        session.wrong++;
+        progressState.wrong++;
+        session.wrongQuestions.push(q);
+        if (!progressState.wrongIds.includes(q.id)) progressState.wrongIds.push(q.id);
+        $("feedback").className = "feedback bad";
+        $("feedback").textContent = "Неправильно. Правильный ответ подсвечен зелёным.";
+      }
+
+      saveProgress();
+      setTimeout(() => {
+        session.index++;
+        if (session.index >= session.queue.length) finishQuiz();
+        else renderQuestion();
+      }, 1000);
+    }
+
+    function revealAnswer(chosen, correct) {
+      const buttons = [...$("options").querySelectorAll(".option")];
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (correct.has(i)) btn.classList.add("correct");
+        if (chosen.has(i) && !correct.has(i)) btn.classList.add("wrong");
+      });
+      $("submitMulti").disabled = true;
+    }
+
+    function finishQuiz() {
+      if (!session) return;
+      const total = session.queue.length;
+      const result = {
+        mode: session.mode,
+        total,
+        correct: session.correct,
+        wrong: session.wrong,
+        wrongQuestions: session.wrongQuestions
+      };
+      session = null;
+      renderEnd(result);
+    }
+
+    function renderEnd(result) {
+      showScreen("end");
+      const pct = result.total ? Math.round((result.correct / result.total) * 100) : 100;
+      $("endMode").textContent = result.mode === "mistakes" ? "Итог работы над ошибками" : "Итог полного теста";
+      $("bigScore").textContent = `${pct}%`;
+      $("endText").textContent = `Правильно: ${result.correct}. Неправильно: ${result.wrong}. Осталось в работе над ошибками: ${progressState.wrongIds.length}.`;
+
+      const currentMistakes = bank.filter(q => progressState.wrongIds.includes(q.id));
+      $("mistakeWrap").classList.toggle("hidden", currentMistakes.length === 0);
+      $("mistakeList").innerHTML = currentMistakes.slice(0, 80).map(q => {
+        const answers = q.options.filter(o => o.correct).map(o => o.text).join("; ");
+        return `<div class="mistake-item"><b>${escapeHtml(q.question)}</b><small>Правильный ответ: ${escapeHtml(answers)}</small></div>`;
+      }).join("");
+      renderStats();
+    }
+
+    function download(filename, content, type = "application/json") {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function readFileAsText(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(reader.error);
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.readAsText(file);
+      });
+    }
+
+    function importContent(raw) {
+      const text = String(raw || "").trim();
+      if (!text) throw new Error("Пустой импорт.");
+
+      let parsed = [];
+      if (text.startsWith("[") || text.startsWith("{")) {
+        const json = JSON.parse(text);
+        parsed = Array.isArray(json) ? json : json.questions;
+        parsed = sanitizeBank(parsed);
+      } else if (text.includes("<html") || text.includes("<body") || text.includes("<li") || text.includes("<span")) {
+        parsed = parseHtmlBank(text);
+      } else {
+        parsed = parsePlainTextBank(text);
+      }
+
+      if (!parsed.length) {
+        throw new Error("Не удалось найти вопросы с правильными ответами. Попробуй сохранить страницу как HTML, а не копировать текст.");
+      }
+
+      bank = mergeBanks(bank, parsed);
+      saveBank();
+      setStatus(`Импортировано/обновлено: ${parsed.length}. Всего в банке: ${bank.length}.`, true);
+      showScreen("welcome");
+    }
+
+    function mergeBanks(oldBank, newBank) {
+      const map = new Map();
+      for (const q of oldBank) map.set(questionKey(q), q);
+      for (const q of newBank) map.set(questionKey(q), q);
+      return [...map.values()].map((q, i) => ({ ...q, id: q.id || `q-${i + 1}` }));
+    }
+
+    function questionKey(q) {
+      return normalizeText(q.question).toLowerCase().slice(0, 180);
+    }
+
+    function colorLooksRed(value) {
+      if (!value) return false;
+      const s = String(value).toLowerCase().replace(/\s/g, "");
+      if (s.includes("red") || s.includes("#ff0000") || s.includes("#f00") || s.includes("rgb(255,0,0)")) return true;
+      const m = s.match(/rgba?\((\d+),(\d+),(\d+)/);
+      if (!m) return false;
+      const r = Number(m[1]), g = Number(m[2]), b = Number(m[3]);
+      return r > 180 && g < 90 && b < 90;
+    }
+
+    function elementLooksCorrect(el) {
+      if (!el) return false;
+      const own = `${el.getAttribute("style") || ""} ${el.getAttribute("class") || ""}`;
+      if (/correct|answer|right/i.test(own)) return true;
+      if (/correct answer/i.test(el.textContent || "")) return true;
+
+      const nodes = [el, ...el.querySelectorAll("span,b,strong,font,em")];
+      return nodes.some(n => {
+        const style = n.getAttribute("style") || "";
+        const colorAttr = n.getAttribute("color") || "";
+        return colorLooksRed(style) || colorLooksRed(colorAttr);
+      });
+    }
+
+    function nearestArticle(doc) {
+      return doc.querySelector("article")
+        || doc.querySelector(".entry-content")
+        || doc.querySelector(".post-content")
+        || doc.querySelector("main")
+        || doc.body;
+    }
+
+    function directText(el) {
+      let out = "";
+      for (const node of el.childNodes) {
+        if (node.nodeType === Node.TEXT_NODE) out += node.textContent + " ";
+        if (node.nodeType === Node.ELEMENT_NODE && !["UL", "OL", "SCRIPT", "STYLE"].includes(node.tagName)) {
+          out += node.textContent + " ";
+        }
+      }
+      return normalizeText(out);
+    }
+
+    function parseHtmlBank(html) {
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      const root = nearestArticle(doc);
+      const items = [...root.querySelectorAll("p,h2,h3,h4,li,pre,blockquote,div,img")]
+        .filter(el => !["SCRIPT", "STYLE", "NOSCRIPT"].includes(el.tagName));
+
+      const questions = [];
+      let current = null;
+      let insideExplanation = false;
+      let lastText = "";
+
+      function finish() {
+        if (!current) return;
+        current.question = normalizeText(current.question);
+        current.options = dedupeOptions(current.options || []);
+        if (current.question && current.options.length >= 2 && current.options.some(o => o.correct)) {
+          current.multiple = current.options.filter(o => o.correct).length > 1;
+          questions.push(current);
+        }
+      }
+
+      for (const el of items) {
+        if (el.tagName === "IMG" && current) {
+          const src = el.getAttribute("src") || el.getAttribute("data-src") || el.getAttribute("data-lazy-src");
+          if (src) current.images.push(src);
+          continue;
+        }
+
+        const text = normalizeText(el.tagName === "LI" ? el.textContent : directText(el));
+        if (!text || text.length < 2) continue;
+        if (/^subscribe$|^reply$|^post navigation$/i.test(text)) continue;
+
+        const qMatch = text.match(/^(\d{1,3})\.\s+(.+)/);
+        const probablyQuestion = qMatch && !/^\d+\.\d+/.test(text) && text.length < 520;
+
+        if (probablyQuestion) {
+          finish();
+          insideExplanation = false;
+          current = {
+            id: `q-${qMatch[1]}`,
+            question: qMatch[2],
+            code: "",
+            images: [],
+            options: []
+          };
+          lastText = text;
+          continue;
+        }
+
+        if (!current) continue;
+
+        if (/^Explanation:/i.test(text)) {
+          insideExplanation = true;
+          continue;
+        }
+
+        if (el.tagName === "PRE") {
+          current.code = current.code ? current.code + "\n" + text : text;
+          continue;
+        }
+
+        if (insideExplanation) continue;
+
+        if (/^Place the options in the following order:/i.test(text)) continue;
+        if (/^Network Security/i.test(text)) continue;
+        if (text === lastText) continue;
+
+        if (el.tagName === "LI") {
+          const clean = normalizeText(text.replace(/\(Correct Answer\)/ig, ""));
+          if (clean && clean.length < 650) {
+            current.options.push({ text: clean, correct: elementLooksCorrect(el) });
+          }
+          continue;
+        }
+
+        const isAnswerLine = elementLooksCorrect(el) || /\(Correct Answer\)/i.test(text);
+        if (isAnswerLine && text.length < 650 && !/^\d+\.\s+/.test(text)) {
+          current.options.push({ text: normalizeText(text.replace(/\(Correct Answer\)/ig, "")), correct: true });
+        }
+      }
+      finish();
+      return sanitizeBank(questions);
+    }
+
+    function dedupeOptions(options) {
+      const seen = new Set();
+      const out = [];
+      for (const o of options) {
+        const key = normalizeText(o.text).toLowerCase();
+        if (!key || seen.has(key)) continue;
+        seen.add(key);
+        out.push({ text: normalizeText(o.text), correct: Boolean(o.correct) });
+      }
+      return out;
+    }
+
+    function parsePlainTextBank(text) {
+      const lines = String(text).split(/\r?\n/).map(normalizeText).filter(Boolean);
+      const questions = [];
+      let current = null;
+      let optionBuffer = [];
+
+      function finish() {
+        if (!current) return;
+        current.options = dedupeOptions(optionBuffer);
+        if (current.question && current.options.length >= 2 && current.options.some(o => o.correct)) {
+          questions.push(current);
+        }
+        current = null;
+        optionBuffer = [];
+      }
+
+      for (const line of lines) {
+        const qMatch = line.match(/^(\d{1,3})\.\s+(.+)/);
+        if (qMatch) {
+          finish();
+          current = { id: `q-${qMatch[1]}`, question: qMatch[2], code: "", images: [], options: [] };
+          continue;
+        }
+        if (!current) continue;
+        if (/^Explanation:/i.test(line)) continue;
+        if (/^Place the options/i.test(line)) continue;
+
+        let option = line;
+        option = option.replace(/^[-*•]\s+/, "");
+        const correct = /\(Correct Answer\)|Correct Answer/i.test(option);
+        option = normalizeText(option.replace(/\(Correct Answer\)/ig, "").replace(/Correct Answer/ig, ""));
+        if (option && option.length < 650 && !/^\d+\.\s+/.test(option)) {
+          optionBuffer.push({ text: option, correct });
+        }
+      }
+      finish();
+      return sanitizeBank(questions);
+    }
+
+    $("toggleImport").addEventListener("click", () => {
+      $("importPanel").classList.toggle("hidden");
+    });
+
+    $("startAll").addEventListener("click", () => startQuiz("all"));
+    $("startMistakes").addEventListener("click", () => startQuiz("mistakes"));
+    $("againAll").addEventListener("click", () => startQuiz("all"));
+    $("againMistakes").addEventListener("click", () => startQuiz("mistakes"));
+    $("submitMulti").addEventListener("click", gradeCurrent);
+
+    $("loadSample").addEventListener("click", () => {
+      bank = mergeBanks(bank, SAMPLE_QUESTIONS);
+      saveBank();
+      setStatus(`Пример загружен. Всего вопросов: ${bank.length}.`, true);
+      showScreen("welcome");
+    });
+
+    $("clearBank").addEventListener("click", () => {
+      if (!confirm("Очистить весь банк вопросов?")) return;
+      bank = [];
+      progressState = { wrongIds: [], solved: 0, wrong: 0 };
+      saveBank();
+      saveProgress();
+      setStatus("Банк очищен.");
+      showScreen("welcome");
+    });
+
+    $("resetProgress").addEventListener("click", () => {
+      if (!confirm("Сбросить статистику и список ошибок?")) return;
+      progressState = { wrongIds: [], solved: 0, wrong: 0 };
+      saveProgress();
+      renderStats();
+      showScreen("welcome");
+    });
+
+    $("exportJson").addEventListener("click", () => {
+      download("network-security-quiz-bank.json", JSON.stringify(bank, null, 2));
+    });
+
+    $("parsePaste").addEventListener("click", () => {
+      try {
+        importContent($("pasteBox").value);
+      } catch (err) {
+        setStatus(err.message || "Ошибка импорта.");
+      }
+    });
+
+    $("loadFile").addEventListener("click", async () => {
+      try {
+        const file = $("htmlFile").files[0];
+        if (!file) throw new Error("Выбери HTML, TXT или JSON файл.");
+        const raw = await readFileAsText(file);
+        importContent(raw);
+      } catch (err) {
+        setStatus(err.message || "Ошибка загрузки файла.");
+      }
+    });
+
+    async function autoLoadRemoteBank() {
+      if (bank.length) return;
+      try {
+        const res = await fetch("./questions.json", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        const parsed = sanitizeBank(Array.isArray(data) ? data : data.questions);
+        if (!parsed.length) return;
+        bank = mergeBanks(bank, parsed);
+        saveBank();
+        const note = document.querySelector("#welcome .notice");
+        if (note) note.textContent = `Автоматически загружен questions.json: ${parsed.length} вопросов. Можно начинать тест.`;
+      } catch {
+        // questions.json отсутствует или повреждён. Это нормально: сайт всё равно работает через ручной импорт.
+      }
+    }
+
+    renderStats();
+    autoLoadRemoteBank();
+  </script>
+</body>
+</html>
